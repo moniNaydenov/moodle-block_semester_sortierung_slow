@@ -1,0 +1,342 @@
+<?php
+// This file is part of block_semsort for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Render class
+ *
+ * @package       block_semsort
+ * @author        Andreas Hruska (andreas.hruska@tuwien.ac.at)
+ * @author        Katarzyna Potocka (katarzyna.potocka@tuwien.ac.at)
+ * @author        Simeon Naydenov (moniNaydenov@gmail.com)
+ * @copyright     2014 Academic Moodle Cooperation {@link http://www.academic-moodle-cooperation.org}
+ * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace block_semsort\output;
+
+use html_writer;
+use moodle_url;
+use stdClass;
+
+
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * semsort block rendrer
+ *
+ */
+class renderer extends \plugin_renderer_base {
+
+
+    public function render_block(stdClass $context) {
+        $output = $this->get_mustache()->render('block_semsort/block', $context);
+        return $output;
+    }
+
+    /**
+     * Constructs a string with all courses' short description, including remote_courses. remote_courses are not implemented though
+     *
+     * @param sortedcourses - array of the sorted courses
+     * @param $remotecourses - array of the remote courses
+     * @return string html to be displayed in course_overview block
+     */
+    public function semsort(\block_semsort $block) {
+        global $CFG, $DB, $PAGE;
+
+        $html = '';
+        $context = $block->export_for_template($this);
+
+        $movecourse = optional_param('block_semsort_move_course', 0, PARAM_INT);
+        $movecoursesemester = optional_param('block_semsort_move_semester', '', PARAM_ALPHANUM);
+        $movecoursetarget = optional_param('block_semsort_move_target', -1, PARAM_INT);
+
+        if (is_null($context->config)) {
+            die; //just to make sure it doesn't really fire
+            //$context->config = get_config('block_semsort');
+        }
+        $config = $context->config;
+
+
+
+        $content = '';
+        $first = true;
+
+        foreach ($context->courses as $semester => $semesterinfo) {
+            $isfavorites = $semester == 'fav';
+            $printmovetargets = $context->userediting &&
+                $movecoursesemester == $semester &&
+                $movecoursetarget < 0 &&
+                isset($semesterinfo['courses'][$movecourse]);
+
+            if ($context->sorted || $isfavorites) {
+                $empty = false;
+                if ($isfavorites) {
+                    $empty = count($semesterinfo['courses']) <= 0;
+                }
+                // All courses are divided by semester into openable divs
+                // opens a new semester box.
+                $scontext = new stdClass;
+                $scontext->first = $first;
+                $scontext->semestertitle = $semesterinfo['title'];
+                $scontext->expanded = ($first && count($context->semestersexpanded) == 0) || isset($context->semestersexpanded[$semester]);
+                $scontext->empty = $empty;
+                $scontext->semestercode = $semester;
+                $content .= $this->get_mustache()->render('block_semsort/semester_start', $scontext);
+               /* $content .= $this->start_semester($semester,
+                    $semesterinfo['title'],
+                    $context->semestersexpanded,
+                    $first,
+                    $empty);*/
+            } else if ($first) {
+                // When not sorted, only one div is opened.
+                $content .= html_writer::start_tag('div', array( 'class' => 'semestersortierung nosemester semester'));
+            }
+
+            $first = $isfavorites;
+
+            $moveindex = 0;
+            foreach ($semesterinfo['courses'] as $id => $course) {
+                $courseid = strval($course->id);
+
+                if ($printmovetargets) {
+                    if ($movecourse == $id) {
+                        continue;
+                    } else {
+                        $content .= $this->get_move_target($movecourse, $moveindex, $semester);
+                    }
+                }
+
+                $ccontext = new stdClass;
+                $ccontext->course = $course;
+                $ccontext->expanded = isset($context->coursesexpanded[$courseid]);
+                $ccontext->favorite = intval(isset($context->favorites[$courseid]));
+                $ccontext->showfavorites = $context->showfavorites;
+                $ccontext->userediting = $context->userediting;
+                $ccontext->course_info = $this->render_course_info($courseid, $context->exportedevents);
+                $ccontext->courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+                $ccontext->staticmoveurl = new moodle_url($this->page->url, array(
+                    'block_semsort_move_course' => $courseid,
+                    'block_semsort_move_semester' => $semester));
+                $ccontext->favoritesaddurl = new moodle_url($this->page->url, array(
+                    'block_semsort_favorites' => $courseid,
+                    'status' => '0'));
+                $ccontext->favoritesremoveurl = new moodle_url($this->page->url, array(
+                    'block_semsort_favorites' => $courseid,
+                    'status' => '1'));
+
+                $content .= $this->get_mustache()->render('block_semsort/course', $ccontext);
+
+                /*$content .= $this->course_html($course,
+                    $context->exportedevents,
+                    isset($context->coursesexpanded[$courseid]),
+                    isset($context->favorites[$courseid]),
+                    $context->showfavorites,
+                    $context->userediting);*/
+                $moveindex++;
+            }
+
+            if ($printmovetargets) {
+                $content .= $this->get_move_target($movecourse, $moveindex, $semester);
+            }
+
+            if ($context->sorted || $isfavorites) {
+                // Close the semester box.
+                $content .= $this->get_mustache()->render('block_semsort/semester_end');
+                //$content .= $this->end_semester();
+            }
+        }
+
+        // Closes the last semester box if the courses are not sorted.
+        if (!$context->sorted) {
+            $content .= html_writer::end_tag('div');
+        }
+
+        $html .= html_writer::nonempty_tag('div', $content, array(
+            'id' => 'semesteroverviewcontainer',
+            'class' => 'no_javascript'));
+
+        // Prints remote courses.. standard behavior like in course overview block.
+        if (!empty($context->remotecourses)) {
+            $html .= $this->output->heading(get_string('remotecourses', 'mnet'));
+        }
+        foreach ($context->remotecourses as $course) {
+            $html .= $this->output->box_start('coursebox');
+            $attributes = array('title' => s($course->fullname));
+            $html .= $this->output->heading(html_writer::link(
+                new moodle_url('/auth/mnet/jump.php', array('hostid' => $course->hostid,
+                    'wantsurl' => '/course/view.php?id='.$course->remoteid)),
+                format_string($course->shortname),
+                $attributes) . ' (' . format_string($course->hostname) . ')', 3);
+            $html .= $this->output->box_end();
+        }
+
+        return $html;
+    }
+
+
+    public function render_course_info($courseid, $exportedevents) {
+        if (!isset($exportedevents[$courseid]) || empty($exportedevents[$courseid]->events)) {
+            return '';
+        }
+
+        $output = $this->render_from_template('block_semsort/course-event-list', $exportedevents[$courseid]);
+        return $output;
+    }
+
+
+    private function get_move_target($courseid, $moveindex, $semester) {
+        $html = html_writer::tag('a', '', array(
+            'class' => 'blockmovetarget',
+            'href' => new moodle_url($this->page->url, array(
+                'block_semsort_move_course' => $courseid,
+                'block_semsort_move_target' => $moveindex,
+                'block_semsort_move_semester' => $semester)),
+        ));
+        return $html;
+    }
+
+    /*
+
+
+    private function start_semester($semestercode, $semestertitle, $expandedsemesters, $first, $empty) {
+        $html = '';
+
+        $classes = array('semester');
+        if ($empty) {
+            $classes[] = 'empty';
+        }
+        if (($first && count($expandedsemesters) == 0) || isset($expandedsemesters[$semestercode])) {
+            $classes[] = 'expanded';
+        }
+        $classes[] = $semestercode;
+        $html .= html_writer::start_tag('fieldset', array(
+            'class' => implode(' ', $classes),
+            'data-id' => $semestercode));
+        $html .= html_writer::start_tag('legend');
+        $html .= $this->get_expand_image_button_html();
+
+        $html .= '&nbsp;' . $semestertitle;
+        $html .= html_writer::end_tag('legend');
+        $html .= html_writer::start_tag('div', array('class' => 'expandablebox'));
+        return $html;
+    }
+
+    private function end_semester() {
+        $html = '';
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_tag('fieldset');
+        return $html;
+    }
+
+        private function course_html($course, $exportedevents, $courseexpanded, $isfav, $showfavorites, $userediting) {
+            // Prints course as in standard course overview block.
+            $html = '';
+            $classes = array('course');
+
+            $attributes = array('title' => s($course->fullname));
+            $attributes['class'] = 'courselink';
+            if ($courseexpanded) {
+                $classes[] = 'expanded';
+            }
+            if (empty($course->visible)) {
+                $attributes['class'] .= ' dimmed';
+                $classes[] = 'hidden';
+            } else {
+                $classes[] = 'nothidden';
+            }
+            $courseboxid = $course->id;
+            $html .= html_writer::start_tag('fieldset', array(
+                'class' => implode(' ', $classes),
+                'data-id' => $courseboxid,
+                'data-semester' => $course->semester_short,
+                'data-fav' => ($isfav ? '1' : '0')));
+            $html .= html_writer::start_tag('legend');
+
+            if ($userediting) {
+                $html .= $this->get_personalsort_icons($course->id, $course->semester_short);
+            }
+
+            $html .= $this->get_expand_image_button_html();
+
+            $html .= '&nbsp;'. html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
+                trim(format_string($course->fullname)), $attributes) . '&nbsp;';
+            $html .= html_writer::end_tag('legend');
+            if ($showfavorites) {
+                $html .= $this->get_favorites_icon($course->id, true, $isfav == true);
+                $html .= $this->get_favorites_icon($course->id, false, $isfav == false);
+            } else {
+                $html .= html_writer::tag('div', '');
+                $html .= html_writer::tag('div', '');
+            }
+            $html .= html_writer::start_tag('div', array('class' => 'expandablebox'));
+
+            $html .= $this->render_course_info($course->id, $exportedevents);
+            $html .= html_writer::end_tag('div');
+
+            $html .= html_writer::end_tag('fieldset');
+            return $html;
+        }
+    private function get_personalsort_icons($courseid, $semester) {
+        $html = html_writer::empty_tag('img', array(
+            'src' => $this->output->image_url('i/dragdrop'),
+            'class' => 'iconsmall move-drag-start hidden'
+        ));
+        $html .= html_writer::start_tag('a', array( // No-js icon.
+            'href' => new moodle_url($this->page->url, array(
+                'block_semsort_move_course' => $courseid,
+                'block_semsort_move_semester' => $semester)),
+            'class' => 'move-static'
+        ));
+        $html .= html_writer::empty_tag('img', array(
+            'src' => $this->output->image_url('t/move'),
+            'class' => 'iconsmall'
+        ));
+        $html .= html_writer::end_tag('a');
+
+
+        return $html;
+    }
+
+    private function get_favorites_icon($courseid, $addorrem, $isfav) {
+        $content = html_writer::start_tag('a', array(
+            'href' => new moodle_url($this->page->url, array(
+                'block_semsort_favorites' => $courseid,
+                'status' => ($addorrem ? '0' : '1'))),
+            'class' => 'togglefavorites ' . ($addorrem ? 'on' : 'off') . ($isfav ? '' : ' invisible'),
+            'data-fav' => strval($addorrem)));
+        $content .= html_writer::empty_tag('img', array(
+            'src' => $this->output->image_url($addorrem ? 'fav_on' : 'fav_off', 'block_semsort'),
+            'alt' => get_string($addorrem ? 'removefromfavorites' : 'addtofavorites', 'block_semsort'),
+            'title' => get_string($addorrem ? 'removefromfavorites' : 'addtofavorites', 'block_semsort'),
+            'class' => 'favoriteicon'));
+        $content .= html_writer::end_tag('a');
+        return $content;
+    }
+
+    */
+
+    /**
+     * gets the html for each +/- button next to the semester/course name
+     *
+     * @param $shown - bool whether the box should be opened
+     * @return string the html of the box
+     */
+    public function get_expand_image_button_html() {
+        $classes = array('imgbox');
+        $ret = html_writer::tag('div', '', array('class' => implode(' ', $classes)));
+        return $ret;
+    }
+}

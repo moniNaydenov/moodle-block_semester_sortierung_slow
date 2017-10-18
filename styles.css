@@ -1,0 +1,249 @@
+/* semester sortierung css */
+.block_semsort .loadingmodinfo {
+    margin: -1px -1px 5px;
+}
+
+.block_semsort fieldset {
+    border: 1px solid #DDD;
+    padding: 0 5px 5px;
+    min-height: 20px;
+}
+
+.block_semsort .semesteroverviewcontainer > fieldset {
+    padding-top: 0px;
+}
+
+.block_semsort .semester > legend {
+    font-weight: bold;
+    cursor: pointer;
+  /*  color: #3D4653;*/
+    font-size: 16px;
+    margin-top: 0;
+}
+.block_semsort .course > legend  {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: none;
+    cursor: pointer;
+    /*word-break: break-all;*/
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.block_semsort .course > legend > a {
+    font-weight: bold;
+    /*color: #002C73;*/
+    font-size: 15.15px;
+    display: inline-block !important;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 94%;
+}
+
+.block_semsort .course > legend > a:hover {
+    /*color: #CC0033;*/
+}
+
+.block_semsort .course > legend > a.dimmed {
+    /*color: #AAAAAA;*/
+}
+
+.block_semsort .expandablebox {
+    overflow: hidden;
+    height: 1px;
+}
+
+.block_semsort .expanded > .expandablebox,
+.block_semsort .no_javascript .semester > .expandablebox  {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.block_semsort legend > .imgbox {
+    background-image: url([[pix:t/switch_plus]]);
+    background-repeat: no-repeat;
+    background-position: 0px -2px;
+    display: inline-block;
+    height: 10px;
+    width: 12px;
+    zoom: 1;  *display: inline; *height: 15px; /* IE7 Hack */
+}
+
+.block_semsort .expanded  > legend > .imgbox {
+    background-image: url([[pix:t/switch_minus]]);
+}
+
+.block_semsort .loading > legend > .imgbox{
+    background-image: url([[pix:i/loading_small]]);
+    background-position: 0 0;
+    display: inline-block;
+    background-size: 14px 14px;
+    height: 14px;
+    width: 14px;
+    margin: 0 -2px -2px 2px;
+    zoom: 1;  *display: inline; *height: 15px; /* IE7 Hack */
+}
+
+.block_semsort fieldset fieldset {
+    border: 1px solid #DDD;
+    padding-left: 5px;
+    margin-left: 5px;
+}
+
+.block_semsort .no_javascript .imgbox,
+.block_semsort .no_javascript .course > .expandablebox {
+    display: none;
+}
+
+.block_semsort .togglefavorites.invisible {
+    display: none;
+}
+.block_semsort .semester .favoriteicon {
+    display: none;
+}
+
+
+
+/* bigger fix here */
+
+
+.block_semsort .course > legend {
+    padding-right: 0px;
+}
+
+.block_semsort .coursebox {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+
+.block_semsort fieldset.course {
+    min-height: 30px;
+}
+
+.block_semsort .no_javascript .semester .favoriteicon,
+.block_semsort .semester.nosemester .favoriteicon,
+.block_semsort .semester.expanded .favoriteicon {
+    position: relative;
+    top: 0px;
+    right: 0px;
+    margin-top: 0px;
+}
+
+.block_semsort fieldset {
+    position: relative;
+}
+
+.block_semsort legend {
+    border: 0px;
+    width: auto !important;
+    max-width: 100%;
+    padding-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    line-height: 19px;
+}
+
+
+
+/* end of bigger fix */
+
+.block_semsort .no_javascript .semester .togglefavorites img,
+.block_semsort .semester.nosemester .togglefavorites img,
+.block_semsort .semester.expanded .togglefavorites img{
+    height: 16px;
+    width: 17px;
+    right: 0px;
+    /*margin-top: -12px;*/
+    position: absolute;
+    display: block !important;
+}
+
+
+.togglefavorites {
+    position: absolute;
+    right: 10px;
+    margin-top: -12px;
+}
+
+/* one line fix :) */
+
+.block_semsort .content {
+    position: relative;
+}
+
+.block_semsort .coursebox div.info {
+    width: 100% !important;
+}
+
+.block_semsort .semester.empty {
+    display: none;
+}
+
+.block_semsort .move-drag-start {
+    cursor: move;
+}
+
+.block_semsort fieldset.dragged {
+    opacity: 0.3;
+}
+
+
+.block_semsort fieldset.dragged {
+    /*display: none !important;*/
+}
+
+.block_semsort .blockmovetarget.drop-selected {
+    background-color: #f00
+}
+
+
+.block_semsort .blockmovetarget {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 30px;
+    display: block;
+    border-width: 2px;
+    border-style: dashed;
+}
+
+.block_semsort fieldset.course .coursebox div.name a {
+    word-break: break-all;
+    display: inline-block;
+
+}
+
+
+@media (max-width: 991px) {
+
+    .block_semsort .course > legend > a {
+        max-width: 92%;
+    }
+}
+
+
+
+
+@media (max-width: 767px) {
+    .block_semsort .course > legend > a {
+        max-width: 88%;
+    }
+
+}
+
+
+
+@media (max-width: 575px) {
+
+    .block_semsort .course > legend > a {
+        max-width: 81%;
+    }
+}
+
+@media (max-width: 375px) {
+
+    .block_semsort .course > legend > a {
+        max-width: 75%;
+    }
+}
