@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017051401;
+$plugin->version   = 2017051402;
 $plugin->requires  = 2017051200;
 $plugin->component = 'block_semsort';
 $plugin->maturity  = MATURITY_STABLE;

@@ -59,7 +59,7 @@ $functions = array(
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
 $services = array(
-    'SemSort web service' => array(
+    'Block SemSort Web Service' => array(
         'functions' => array ('block_semsort_get_modules', 'block_semsort_get_courses', 'block_semsort_get_coursedetails' ),
         'restrictedusers' => 1,
         'enabled'=>1,

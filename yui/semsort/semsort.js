@@ -41,10 +41,10 @@ SEMSORT.prototype = {
         if (Y.one('.no_javascript')) {
             Y.one('.no_javascript').removeClass('no_javascript');
         }
-        Y.all('#semesteroverviewcontainer fieldset .togglefavorites').set('href', 'javascript: void(0);');
+        Y.all('#semsortcontainer fieldset .togglefavorites').set('href', 'javascript: void(0);');
         var self = this;
-        Y.delegate('click', function(e){self.setNewStatus(e);}, node.one('#semesteroverviewcontainer'), 'fieldset legend');
-        Y.delegate('click', function(e){self.toggleFavorites(e);}, node.one('#semesteroverviewcontainer'), 'fieldset .togglefavorites');
+        Y.delegate('click', function(e){self.setNewStatus(e);}, node.one('#semsortcontainer'), 'fieldset legend');
+        Y.delegate('click', function(e){self.toggleFavorites(e);}, node.one('#semsortcontainer'), 'fieldset .togglefavorites');
     },
     
     toggleFavorites : function(e) {
@@ -58,31 +58,31 @@ SEMSORT.prototype = {
             target.one('.togglefavorites.off').addClass('invisible');
 
             var newtarget = target.cloneNode(true);
-            Y.one('#semesteroverviewcontainer fieldset.fav').insert(newtarget);
+            Y.one('#semsortcontainer fieldset.fav').insert(newtarget);
             makeCourseDraggable(newtarget, null);
             newtarget.setAttribute('data-fav', 1);
             newtarget.setAttribute('data-semester', 'fav');
             stat = '1';
             target.setAttribute('data-fav', 1);
             this.sortFavorites();
-            Y.one('#semesteroverviewcontainer fieldset.fav').removeClass('empty');
+            Y.one('#semsortcontainer fieldset.fav').removeClass('empty');
             console.log(newtarget);
         } else {
-            Y.one('#semesteroverviewcontainer fieldset.fav').all('fieldset.course').each(function(e) {
+            Y.one('#semsortcontainer fieldset.fav').all('fieldset.course').each(function(e) {
                     if (e.getData('id') == cid) {
                         e.remove();
                     }
                 });
-            Y.one('#semesteroverviewcontainer').all('fieldset.course').each(function(e) {
+            Y.one('#semsortcontainer').all('fieldset.course').each(function(e) {
                     if (e.getData('id') == cid) {
                         e.one('.togglefavorites.off').removeClass('invisible');
                         e.one('.togglefavorites.on').addClass('invisible');
                         e.setAttribute('data-fav', '0');
                     }
                 });
-            var favcount = Y.one('#semesteroverviewcontainer fieldset.fav').all('fieldset.course')._nodes.length;
+            var favcount = Y.one('#semsortcontainer fieldset.fav').all('fieldset.course')._nodes.length;
             if (favcount <= 0) {
-                Y.one('#semesteroverviewcontainer fieldset.fav').addClass('empty');
+                Y.one('#semsortcontainer fieldset.fav').addClass('empty');
             }
         }
         var params = {
@@ -97,13 +97,13 @@ SEMSORT.prototype = {
     },
     
     sortFavorites : function() {
-        var favs = Y.one('#semesteroverviewcontainer fieldset.fav');
+        var favs = Y.one('#semsortcontainer fieldset.fav');
         var nothidden = favs.all('fieldset.course.nothidden')._nodes;
         var hidden = favs.all('fieldset.course.hidden')._nodes;
         nothidden.sort(this.customSorting);
         hidden.sort(this.customSorting);
         favs.all('fieldset.course').each(function(e){e.remove();});
-        favs = Y.one('#semesteroverviewcontainer fieldset.fav .expandablebox');
+        favs = Y.one('#semsortcontainer fieldset.fav .expandablebox');
         for (var i = 0; i < nothidden.length; i++) {
             favs.appendChild(nothidden[i]);
         }
@@ -174,7 +174,7 @@ var makeCourseDraggable = function(v, k) {
         }).plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false
             }).plug(Y.Plugin.DDConstrained, {
-                constrain2node: '#semesteroverviewcontainer',
+                constrain2node: '#semsortcontainer',
                 stickY: true
             });
         dd.addHandle('legend span.move-drag-start');
@@ -190,7 +190,7 @@ var makeCourseDraggable = function(v, k) {
 //Static Vars
 var goingUp = false, lastY = 0;
 
-var list = Y.Node.all('#semesteroverviewcontainer .course');
+var list = Y.Node.all('#semsortcontainer .course');
 list.each(makeCourseDraggable);
 
 Y.DD.DDM.on('drag:start', function(e) {

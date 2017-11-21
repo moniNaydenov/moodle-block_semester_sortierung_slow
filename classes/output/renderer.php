@@ -102,7 +102,7 @@ class renderer extends \plugin_renderer_base {
                     $empty);*/
             } else if ($first) {
                 // When not sorted, only one div is opened.
-                $content .= html_writer::start_tag('div', array( 'class' => 'semestersortierung nosemester semester'));
+                $content .= html_writer::start_tag('div', array( 'class' => 'semsort nosemester semester'));
             }
 
             $first = $isfavorites;
@@ -165,7 +165,7 @@ class renderer extends \plugin_renderer_base {
         }
 
         $html .= html_writer::nonempty_tag('div', $content, array(
-            'id' => 'semesteroverviewcontainer',
+            'id' => 'semsortcontainer',
             'class' => 'no_javascript'));
 
         // Prints remote courses.. standard behavior like in course overview block.
