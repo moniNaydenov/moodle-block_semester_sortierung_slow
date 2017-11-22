@@ -34,8 +34,10 @@ class block_semsort extends block_base {
      * block initializations
      */
     public function init() {
+        global $PAGE;
         // Set the title of the block.
         $this->title   = get_string('pluginname', 'block_semsort');
+
     }
 
     /**

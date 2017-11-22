@@ -42,3 +42,7 @@ $string['enablepersonalsort'] = 'Enable personal sort';
 $string['enablepersonalsortdesc'] = 'Enable the user to sort the courses according to his personal wish';
 $string['semsort:addinstance'] = 'Add a new Semester overview block';
 $string['semsort:myaddinstance'] = 'Add a new Semester overview block to My home';
+
+$string['migrate_title'] = 'Migrate settings from deprecated semester_sortierung block';
+$string['migrate'] = 'Migrate settings';
+$string['migrateresults'] = '<strong>Migration complete!</strong><br /><p><br />Updated records: {$a->updated}<br />Newly inserted records: {$a->inserted}<br />Unchanged records: {$a->unchanged}</p>';

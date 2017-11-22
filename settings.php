@@ -27,6 +27,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+
+//$ADMIN->add('blocksettings', new admin_category('blocksemsortfolder', new lang_string('pluginname', 'block_semsort'), false);
+
+//$settings = new admin_settingpage($section, get_string('settings', 'mod_assign'), 'moodle/site:config', false);
+
+
 if ($ADMIN->fulltree) {
 
     $configs = array();
@@ -69,3 +75,5 @@ if ($ADMIN->fulltree) {
 
 }
 
+$ADMIN->add('blocksettings', new admin_externalpage('blocksemsortmigrate', get_string('migrate_title', 'block_semsort'),
+    $CFG->wwwroot.'/blocks/semsort/db/migrate.php'));
