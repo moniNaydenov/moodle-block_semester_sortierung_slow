@@ -62,6 +62,6 @@ $services = array(
     'Block SemSort Web Service' => array(
         'functions' => array ('block_semsort_get_modules', 'block_semsort_get_courses', 'block_semsort_get_coursedetails' ),
         'restrictedusers' => 1,
-        'enabled'=>1,
+        'enabled' => 1,
     )
 );

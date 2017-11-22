@@ -86,7 +86,6 @@ function block_semsort_update_personal_sort($config = null) {
     $courses = block_semsort_fill_course_semester($courses, $config, $movecoursesemester);
     $courses = block_semsort_sort_user_personal_sort($courses, $config, true);
 
-
     $usersort = block_semsort_get_usersort($USER->id);
 
     if (!isset($usersort[$movecoursesemester])) {
@@ -109,7 +108,7 @@ function block_semsort_update_personal_sort($config = null) {
     array_splice($courseorder, $movecoursetarget, 0, $movecourse); // Add the course at the new index.
 
     $usersort[$movecoursesemester]->courseorder = implode(',', array_values($courseorder)); // Clear out indexes.
-    $DB->update_record('block_semsort_usersort', $usersort[$movecoursesemester]); //Save setting
+    $DB->update_record('block_semsort_usersort', $usersort[$movecoursesemester]); // Save setting!
 
 }
 
@@ -200,8 +199,8 @@ function block_semsort_sort_user_personal_sort($sortedcourses, $config, $forcecr
         // Check if existing in the user preference; if not, don't do anything and keep the current sort.
         if (isset($usersort[$semester])) {
             $usersorted = array();
-            $sempref = $usersort[$semester]->courseorder; // Short for $usersorted[$semester].
-            $courses = $semesterinfo['courses']; // Short for $semesterinfo['courses'].
+            $sempref = $usersort[$semester]->courseorder; // Short for $usersorted[$semester]. This is not commented code!
+            $courses = $semesterinfo['courses']; // Short for $semesterinfo['courses']. This is not commented code (codecheker)!
 
             $userprefchanged = false;
             // Go through all courses in the preference and add them to the new sorted list in the desired order.
@@ -279,11 +278,9 @@ function block_semsort_get_courses_events($courses, $output) {
     require_once($CFG->dirroot . '/calendar/lib.php');
     require_once($CFG->dirroot . '/calendar/externallib.php');
 
-
     $allevents = \core_calendar\local\api::get_action_events_by_courses(
         $courses
     );
-
 
     $exportercache = new \core_calendar\external\events_related_objects_cache($allevents, $courses);
     $exporter = new \core_calendar\external\events_grouped_by_course_exporter($allevents, ['cache' => $exportercache]);
@@ -337,5 +334,7 @@ function block_semsort_migrate_user_preferences() {
 
 function block_semsort_get_usersort($userid) {
     global $DB;
-    return $DB->get_records('block_semsort_usersort', array('userid' => $userid), '', 'semester, userid, id, courseorder, lastmodified');
+    return $DB->get_records('block_semsort_usersort', array('userid' => $userid),
+                            '',
+                            'semester, userid, id, courseorder, lastmodified');
 }

@@ -34,7 +34,6 @@ class block_semsort extends block_base {
      * block initializations
      */
     public function init() {
-        global $PAGE;
         // Set the title of the block.
         $this->title   = get_string('pluginname', 'block_semsort');
 
@@ -75,7 +74,6 @@ class block_semsort extends block_base {
 
         $this->config = $config;
 
-
         $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
@@ -84,15 +82,7 @@ class block_semsort extends block_base {
 
         $renderer = $this->page->get_renderer('block_semsort');
 
-        // More remote courses stuff, directly copied from Course overview block
-        // Output buffering is used here.
-        if (FALSE && empty($courses) && empty($remotecourses)) {
-            $content[] = get_string('nocourses', 'my');
-        } else {
-            //$content[] = $renderer->render_block($context);
-            $content[] = $renderer->semsort($this);
-            //$content[] = $renderer->semsort($courses, $remotecourses, $config);
-        }
+        $content[] = $renderer->semsort($this);
 
         $this->content->text = implode($content); // Compile the text from the array.
 
@@ -102,7 +92,6 @@ class block_semsort extends block_base {
     public function export_for_template(renderer_base $output) {
 
         $context = new stdClass;
-
 
         // Get the information about the enrolled courses.
         $courses = enrol_get_my_courses('id, fullname, shortname, summary, summaryformat, enddate', 'visible DESC, fullname ASC');
@@ -156,14 +145,11 @@ class block_semsort extends block_base {
             $coursesexpanded = array();
         }
 
-
-
         if ($favorites = get_user_preferences('semsort_favorites', '')) {
             $context->favorites = array_flip(explode(',', $favorites));
         } else {
             $context->favorites = array();
         }
-
 
         $context->coursesexpanded = array();
 
@@ -176,19 +162,16 @@ class block_semsort extends block_base {
             }
         }
 
-
         $context->exportedevents = block_semsort_get_courses_events($context->coursesexpanded, $output);
-
 
         // Whether the courses should be sorted.
         $context->sorted = (isset($this->config->sortcourses) && $this->config->sortcourses == '1');
 
         $context->showfavorites = (isset($this->config->enablefavorites) && $this->config->enablefavorites == '1');
-        $context->personalsort = (isset($this->config->enablepersonalsort) && $this->config->enablepersonalsort == '1') && $context->sorted;
+        $context->personalsort = (isset($this->config->enablepersonalsort) && $this->config->enablepersonalsort == '1')
+                                 && $context->sorted;
         // Prevent personal sort when not enabled in the setting.
         $context->userediting = $context->personalsort && $this->page->user_is_editing();
-
-
 
         $context->remotecourses = $remotecourses;
         $context->config = $this->config;
@@ -211,7 +194,7 @@ class block_semsort extends block_base {
      * @return array
      */
     public function applicable_formats() {
-        return array('my-index' => true, 'my' => true, 'site' => true);
+        return array('my-index' => true, 'my' => true);
     }
 
     /**

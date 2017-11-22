@@ -35,17 +35,11 @@ if (!is_siteadmin()) {
     redirect(new moodle_url('/my'), get_string('adminonly', 'badges'));
 }
 
-
-
 class migrateform extends moodleform {
     protected function definition() {
-        $mform = &$this->_form;
-        //$mform->addElement('label', )
         $this->add_action_buttons(false, get_string('migrate', 'block_semsort'));
     }
 }
-
-
 
 $context = context_system::instance();
 $PAGE->set_context($context);

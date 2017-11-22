@@ -27,12 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-
-//$ADMIN->add('blocksettings', new admin_category('blocksemsortfolder', new lang_string('pluginname', 'block_semsort'), false);
-
-//$settings = new admin_settingpage($section, get_string('settings', 'mod_assign'), 'moodle/site:config', false);
-
-
 if ($ADMIN->fulltree) {
 
     $configs = array();
@@ -46,7 +40,8 @@ if ($ADMIN->fulltree) {
     $monthsarray = array();
     $selected = array();
     for ($i = 1; $i <= 12; $i++) {
-        $monthsarray['mon' . ($i < 10 ? '0' : '') . strval($i)] = userdate(mktime(1, 0, 0, $i, 1, 2016), '%B');//strftime('%B', ($i * 3600 * 24 * 31));
+        $monthsarray['mon' . ($i < 10 ? '0' : '') . strval($i)] = userdate(mktime(1, 0, 0, $i, 1, 2016),
+                                                                          '%B');
         if ($i < 2 || $i > 6) {
             $selected['mon' . ($i < 10 ? '0' : '') .  strval($i)] = 1;
         }
