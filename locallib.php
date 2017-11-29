@@ -298,11 +298,13 @@ function block_semsort_get_courses_events($courses, $output) {
 
 function block_semsort_migrate_user_preferences() {
     global $DB;
+    // Move sorting preferences from user preferences to new table!
     $userprefs = $DB->get_records('user_preferences', array('name' => 'semester_sortierung_sorting'));
     $counters = new stdClass;
     $counters->updated = 0;
     $counters->inserted = 0;
     $counters->unchanged = 0;
+    $counters->userprefs = 0;
     foreach ($userprefs as $userpref) {
         $userid = $userpref->userid;
         $value = json_decode($userpref->value, true);
@@ -329,6 +331,31 @@ function block_semsort_migrate_user_preferences() {
             }
         }
     }
+
+    // Migrate the rest of the user preferences!
+    $prefs = array(
+        'semester_sortierung_courses' => 'semsort_courses',
+        'semester_sortierung_semesters' => 'semsort_semesters',
+        'semester_sortierung_favorites' => 'semsort_favorites'
+    );
+    foreach ($prefs as $oldname => $newname) {
+        $olduserprefs = $DB->get_records('user_preferences', array('name' => $oldname), '', 'userid, name, value, id');
+        $newuserprefs = $DB->get_records('user_preferences', array('name' => $newname), '', 'userid, name, value, id');
+        foreach ($olduserprefs as $oldpref) {
+            if (isset($newuserprefs[$oldpref->userid])) {
+                continue; // Skip if user pref already migrated!
+            }
+            $counters->userprefs++;
+            $userpref = new stdClass;
+            $userpref->name = $newname;
+            $userpref->value = $oldpref->value;
+            $userpref->userid = $oldpref->userid;
+            $DB->insert_record('user_preferences', $userpref);
+        }
+
+
+    }
+    
     return $counters;
 }
 

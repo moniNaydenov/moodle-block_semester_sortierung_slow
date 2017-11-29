@@ -92,6 +92,43 @@ The Semsort block provides the following web service functions.
   - Sample output: `[ {"modname": "MODULE NAME - UNIQUE ID", "title_en": "Module title in English", "title_de": "Module title in German", "image": "base64EncodedImage"} ]`
 
 
+Migration from old semester_sortierung block
+---------------------
+
+* semester_sortierung - old block, located in blocks/semester_sortierung
+* semsort - renamed (new) block, located in blocks/semsort
+
+On server:
+1. remove "git remote origin" from semester_sortierung, in order to prevent accidental update with the renamed version. 
+Inside moodle_core/blocks/semester_sortierung, run:
+  git remote remove origin
+
+2. install semsort
+Inside moodle_core/blocks, run:
+  git clone https://github.com/academic-moodle-cooperation/moodle-block_semsort.git semsort
+
+In moodle:
+1. Install block as usual
+2. Go to Site Administration > Plugins > Migrate settings from deprecated semester_sortierung block
+3. Run migration script
+4. Open Default Dashboard Page (Site Administration > Appearance > Default Dashboard Page)
+5. Turn Blocks editing on
+6. Remove semester_sortierung
+7. Add semsort 
+8. Turn Blocks editing off
+9. Reset Dashboard for all users
+10. Uninstall semester_sortierung from moodle (Site Administration > Plugins > Blocks > Manage blocks)
+
+On server:
+1. Delete blocks/semester_sortierung
+
+
+
+
+
+
+
+
 Bug Reports / Support
 ---------------------
 
