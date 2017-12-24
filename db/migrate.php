@@ -37,6 +37,11 @@ if (!is_siteadmin()) {
 
 class migrateform extends moodleform {
     protected function definition() {
+        $mform = &$this->_form;
+        $mform->addElement('checkbox', 'defaultdashboard', get_string('migrate:defaultdashboard', 'block_semsort'));
+        $mform->addElement('checkbox', 'alldashboards', get_string('migrate:alldashboards', 'block_semsort'));
+        $mform->addElement('checkbox', 'usersettings', get_string('migrate:usersettings', 'block_semsort') );
+        $mform->addElement('checkbox', 'adminsettings', get_string('migrate:adminsettings', 'block_semsort'));
         $this->add_action_buttons(false, get_string('migrate', 'block_semsort'));
     }
 }
@@ -53,9 +58,29 @@ $PAGE->set_title(get_string('migrate_title', 'block_semsort'));
 $migrateform = new migrateform();
 
 $counts = false;
-if ($migrateform->is_submitted()) {
-    $counts = block_semsort_migrate_user_preferences();
-    redirect($PAGE->url, get_string('migrateresults', 'block_semsort', $counts));
+if ($migrateform->is_submitted() && $data = $migrateform->get_data()) {
+    $migratemessages = '';
+
+    if (isset($data->defaultdashboard)) {
+        block_semsort_migrate_default_dashboard();
+        $migratemessages .= get_string('migrate:defaultdashboard:success',  'block_semsort') . '<br />';
+    }
+    if (isset($data->alldashboards)) {
+        block_semsort_migrate_all_dashboards();
+        $migratemessages .= get_string('migrate:alldashboards:success',  'block_semsort') . '<br />';
+    }
+    if (isset($data->usersettings)) {
+        $counts = block_semsort_migrate_user_preferences();
+        $migratemessages .= get_string('migrate:usersettings:success',  'block_semsort', $counts) . '<br />';
+    }
+    if (isset($data->adminsettings)) {
+         block_semsort_migrate_admin_settings();
+         $migratemessages .= get_string('migrate:adminsettings:success',  'block_semsort') . '<br />';
+    }
+
+    $migratemessages = get_string('migrate:results', 'block_semsort') . $migratemessages;
+
+    redirect($PAGE->url, $migratemessages);
     die;
 }
 

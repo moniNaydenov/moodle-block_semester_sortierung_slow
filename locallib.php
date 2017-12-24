@@ -296,6 +296,49 @@ function block_semsort_get_courses_events($courses, $output) {
     return $exportedevents;
 }
 
+function block_semsort_migrate_admin_settings() {
+    global $DB;
+    $oldsettings = $DB->get_records('config_plugins', array('plugin' => 'block_semester_sortierung'));
+    $settings = $DB->get_records('config_plugins', array('plugin' => 'block_semsort'), '', 'name, id, plugin, value');
+
+    foreach ($oldsettings as $oldsetting) {
+        if ($oldsetting->name == 'version') {
+            continue;
+        }
+        if (isset($settings[$oldsetting->name])) {
+            $settings[$oldsetting->name]->value = $oldsetting->value;
+            $DB->update_record('config_plugins', $settings[$oldsetting->name]);
+        } else {
+            $oldsetting->plugin = 'block_semsort';
+            unset($oldsetting->id);
+            $DB->insert_record('config_plugins', $oldsetting);
+        }
+    }
+}
+
+function block_semsort_migrate_default_dashboard() {
+    global $DB;
+    $instance = $DB->get_record('block_instances', array('blockname' => 'semester_sortierung', 'parentcontextid' => 1));
+    $instance->blockname = 'semsort';
+    $DB->update_record('block_instances', $instance);
+}
+
+function block_semsort_migrate_all_dashboards() {
+    global $DB;
+
+    $instances = $DB->get_records('block_instances', array('blockname' => 'semester_sortierung', 'parentcontextid' => 1));
+    $count = 0;
+    foreach ($instances as $instance) {
+        if ($instance->parentcontextid == 1) {
+            continue;
+        }
+        $instance->blockname = 'semsort';
+        $DB->update_record('block_instances', $instance);
+        $count++;
+    }
+    return $count;
+}
+
 function block_semsort_migrate_user_preferences() {
     global $DB;
     // Move sorting preferences from user preferences to new table!

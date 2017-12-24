@@ -70,5 +70,7 @@ if ($ADMIN->fulltree) {
 
 }
 
-$ADMIN->add('blocksettings', new admin_externalpage('blocksemsortmigrate', get_string('migrate_title', 'block_semsort'),
-    $CFG->wwwroot.'/blocks/semsort/db/migrate.php'));
+if (file_exists($CFG->dirroot . '/blocks/semester_sortierung/version.php')) {
+    $ADMIN->add('blocksettings', new admin_externalpage('blocksemsortmigrate', get_string('migrate_title', 'block_semsort'),
+        $CFG->wwwroot.'/blocks/semsort/db/migrate.php'));
+}

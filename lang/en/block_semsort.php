@@ -45,4 +45,12 @@ $string['semsort:myaddinstance'] = 'Add a new Semester overview block to My home
 
 $string['migrate_title'] = 'Migrate settings from deprecated semester_sortierung block';
 $string['migrate'] = 'Migrate settings';
-$string['migrateresults'] = '<strong>Migration complete!</strong><br /><p><br />Updated records: {$a->updated}<br />Newly inserted records: {$a->inserted}<br />Unchanged records: {$a->unchanged}</p>';
+$string['migrate:results'] = '<strong>Migration complete:</strong><br />';
+$string['migrate:defaultdashboard'] = 'Replace block_semestersortierung with block_semsort on default dashboardpage';
+$string['migrate:alldashboards'] = 'Replace block_semestersortierung with block_semsort on all users dashboardpages';
+$string['migrate:usersettings'] = 'Migrate usersettings (favorite, private order) from block_semestersortierung to block_semsort';
+$string['migrate:adminsettings'] = 'Migrate adminsettings from block_semestersortierung to block_semsort';
+$string['migrate:defaultdashboard:success'] = 'Default Dashboard updated';
+$string['migrate:alldashboards:success'] = 'All users\' Dashboard pages updated';
+$string['migrate:usersettings:success'] = 'User settings: <p><br />Updated records: {$a->updated}<br />Newly inserted records: {$a->inserted}<br />Unchanged records: {$a->unchanged}</p>';
+$string['migrate:adminsettings:success'] = 'Admin settings migrated';
