@@ -54,3 +54,5 @@ $string['migrate:defaultdashboard:success'] = 'Default Dashboard updated';
 $string['migrate:alldashboards:success'] = 'All users\' Dashboard pages updated';
 $string['migrate:usersettings:success'] = 'User settings: <p><br />Updated records: {$a->updated}<br />Newly inserted records: {$a->inserted}<br />Unchanged records: {$a->unchanged}</p>';
 $string['migrate:adminsettings:success'] = 'Admin settings migrated';
+$string['migrateone'] = 'Migrate for current user only';
+$string['migrateall'] = 'Migrate for all users';

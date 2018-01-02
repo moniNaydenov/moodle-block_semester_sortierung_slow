@@ -305,6 +305,7 @@ function block_semsort_migrate_admin_settings() {
         if ($oldsetting->name == 'version') {
             continue;
         }
+
         if (isset($settings[$oldsetting->name])) {
             $settings[$oldsetting->name]->value = $oldsetting->value;
             $DB->update_record('config_plugins', $settings[$oldsetting->name]);
@@ -314,19 +315,33 @@ function block_semsort_migrate_admin_settings() {
             $DB->insert_record('config_plugins', $oldsetting);
         }
     }
+
+    cache_helper::invalidate_by_definition('core', 'config', array(), 'block_semsort');
 }
 
 function block_semsort_migrate_default_dashboard() {
     global $DB;
     $instance = $DB->get_record('block_instances', array('blockname' => 'semester_sortierung', 'parentcontextid' => 1));
-    $instance->blockname = 'semsort';
-    $DB->update_record('block_instances', $instance);
+    if ($instance) {
+        $instance->blockname = 'semsort';
+        $DB->update_record('block_instances', $instance);
+    }
+}
+
+function block_semsort_migrate_currentuser_dashboard() {
+    global $DB, $USER;
+    $context = \context_user::instance($USER->id);
+    $instance = $DB->get_record('block_instances', array('blockname' => 'semester_sortierung', 'parentcontextid' => $context->id));
+    if ($instance) {
+        $instance->blockname = 'semsort';
+        $DB->update_record('block_instances', $instance);
+    }
 }
 
 function block_semsort_migrate_all_dashboards() {
     global $DB;
 
-    $instances = $DB->get_records('block_instances', array('blockname' => 'semester_sortierung', 'parentcontextid' => 1));
+    $instances = $DB->get_records('block_instances', array('blockname' => 'semester_sortierung'));
     $count = 0;
     foreach ($instances as $instance) {
         if ($instance->parentcontextid == 1) {
@@ -339,10 +354,14 @@ function block_semsort_migrate_all_dashboards() {
     return $count;
 }
 
-function block_semsort_migrate_user_preferences() {
-    global $DB;
+function block_semsort_migrate_user_preferences($migrateall = false) {
+    global $DB, $USER;
     // Move sorting preferences from user preferences to new table!
-    $userprefs = $DB->get_records('user_preferences', array('name' => 'semester_sortierung_sorting'));
+    $userfilter = array();
+    if (!$migrateall) {
+        $userfilter = array('userid' => $USER->id);
+    }
+    $userprefs = $DB->get_records('user_preferences', array('name' => 'semester_sortierung_sorting') + $userfilter);
     $counters = new stdClass;
     $counters->updated = 0;
     $counters->inserted = 0;
@@ -382,18 +401,21 @@ function block_semsort_migrate_user_preferences() {
         'semester_sortierung_favorites' => 'semsort_favorites'
     );
     foreach ($prefs as $oldname => $newname) {
-        $olduserprefs = $DB->get_records('user_preferences', array('name' => $oldname), '', 'userid, name, value, id');
-        $newuserprefs = $DB->get_records('user_preferences', array('name' => $newname), '', 'userid, name, value, id');
+        $olduserprefs = $DB->get_records('user_preferences', array('name' => $oldname) + $userfilter, '', 'userid, name, value, id');
+        $newuserprefs = $DB->get_records('user_preferences', array('name' => $newname) + $userfilter, '', 'userid, name, value, id');
         foreach ($olduserprefs as $oldpref) {
-            if (isset($newuserprefs[$oldpref->userid])) {
-                continue; // Skip if user pref already migrated!
-            }
             $counters->userprefs++;
-            $userpref = new stdClass;
-            $userpref->name = $newname;
-            $userpref->value = $oldpref->value;
-            $userpref->userid = $oldpref->userid;
-            $DB->insert_record('user_preferences', $userpref);
+            if (isset($newuserprefs[$oldpref->userid])) {
+                //continue; // Skip if user pref already migrated!
+                $newuserprefs[$oldpref->userid]->value = $oldpref->value;
+                $DB->update_record('user_preferences', $newuserprefs[$oldpref->userid]);
+            } else {
+                $userpref = new stdClass;
+                $userpref->name = $newname;
+                $userpref->value = $oldpref->value;
+                $userpref->userid = $oldpref->userid;
+                $DB->insert_record('user_preferences', $userpref);
+            }
         }
 
 
