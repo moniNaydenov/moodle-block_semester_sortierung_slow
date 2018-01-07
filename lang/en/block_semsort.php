@@ -56,3 +56,6 @@ $string['migrate:usersettings:success'] = 'User settings: <p><br />Updated recor
 $string['migrate:adminsettings:success'] = 'Admin settings migrated';
 $string['migrateone'] = 'Migrate for current user only';
 $string['migrateall'] = 'Migrate for all users';
+
+$string['setting:archivedesc'] = 'Older than {$a} terms';
+$string['setting:archive'] = 'Archive';

@@ -67,9 +67,10 @@ class renderer extends \plugin_renderer_base {
             die; // Just to make sure it doesn't really fire!
         }
         $config = $context->config;
-
         $content = '';
         $first = true;
+        $archivestarted = false;
+        var_dump($context->archive);
 
         foreach ($context->courses as $semester => $semesterinfo) {
             $isfavorites = $semester == 'fav';
@@ -92,6 +93,19 @@ class renderer extends \plugin_renderer_base {
                                       || isset($context->semestersexpanded[$semester]);
                 $scontext->empty = $empty;
                 $scontext->semestercode = $semester;
+
+                if (!$isfavorites &&
+                    $context->archive &&
+                    strcmp($context->archive, $semester) >= 0 &&
+                    !$archivestarted) {
+                    $archivestarted = true;
+                    $acontext = new stdClass;
+                    $acontext->semestertitle = get_string('setting:archivedesc', 'block_semsort', $context->config->archive);
+                    $content .= $this->get_mustache()->render('block_semsort/semester_start', $acontext);
+                }
+
+
+
                 $content .= $this->get_mustache()->render('block_semsort/semester_start', $scontext);
             } else if ($first) {
                 // When not sorted, only one div is opened.
@@ -144,6 +158,10 @@ class renderer extends \plugin_renderer_base {
                 $content .= $this->get_mustache()->render('block_semsort/semester_end');
             }
         }
+        if ($archivestarted) {
+            $content .= $this->get_mustache()->render('block_semsort/semester_end');
+        }
+        $content .= $this->get_mustache()->render('block_semsort/semester_end');
 
         // Closes the last semester box if the courses are not sorted.
         if (!$context->sorted) {

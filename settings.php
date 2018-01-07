@@ -63,6 +63,17 @@ if ($ADMIN->fulltree) {
         get_string('enablepersonalsortdesc', 'block_semsort'),
         '1');
 
+    $values = array();
+    for ($i = 0; $i < 16; $i++) {
+        $values[$i] = strval($i) ;
+    }
+    $values[0] = get_string('no');
+    $configs[] = new admin_setting_configselect('archive',
+        get_string('setting:archive', 'block_semsort'),
+        get_string('setting:archivedesc', 'block_semsort', '...'),
+        0,
+        $values
+    );
     foreach ($configs as $config) {
         $config->plugin = 'block_semsort';
         $settings->add($config);
