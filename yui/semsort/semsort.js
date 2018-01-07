@@ -134,7 +134,7 @@ YUI.add('moodle-block_semsort-semsort', function (Y) {
             var btype = fldset.hasClass('semester') ? 's' : 'c';
             var bstate = fldset.hasClass('expanded') ? 1 : 0;
             var targetdiv = fldset.one('.expandablebox');
-            var useajax = btype == 'c' && targetdiv.getHTML() == '' && bstate == 1 ? 1 : 0;
+            var useajax = btype == 'c' && targetdiv.getHTML().trim() == '' && bstate == 1 ? 1 : 0;
 
             var params = {
                 id: fldset.getData('id'),
