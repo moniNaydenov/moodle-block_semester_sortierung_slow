@@ -5,7 +5,7 @@ This file is part of the block_semsort plugin for Moodle - <http://moodle.org/>
 
 *Author:*    Simeon Naydenov, Katarzyna Potocka
 
-*Copyright:* 2014 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
+*Copyright:* 2018 [Academic Moodle Cooperation](http://www.academic-moodle-cooperation.org)
 
 *License:*   [GNU GPL v3 or later](http://www.gnu.org/copyleft/gpl.html)
 
@@ -33,7 +33,7 @@ and the favourites area for quick access.
 Requirements
 ------------
 
-The plugin is available for Moodle 2.5+. This version is for Moodle 3.3.
+The plugin is available for Moodle 2.5+. This version is for Moodle 3.4.
 
 
 Installation
@@ -53,9 +53,10 @@ Admin Settings
 As an administrator you can set the default values instance-wide on the settings page for
 administrators in the Semsort block:
 
-* Sort courses by semesters (checkbox)
-* Winter semester months (checkbox)
-* Show favourites (checkbox)
+* Sort courses by semesters (checkbox) - controls whether courses are sorted at all
+* Winter semester months (checkbox) - select which months should apply for the winter semester
+* Show favourites (checkbox) - controls whether favourites on
+* Archive (number) - group semesters that are older than the specified value 
 
 
 Web Service
@@ -92,41 +93,16 @@ The Semsort block provides the following web service functions.
   - Sample output: `[ {"modname": "MODULE NAME - UNIQUE ID", "title_en": "Module title in English", "title_de": "Module title in German", "image": "base64EncodedImage"} ]`
 
 
-Migration from old semester_sortierung block
+Migrating settings from old semester_sortierung block
 ---------------------
 
-* semester_sortierung - old block, located in blocks/semester_sortierung
-* semsort - renamed (new) block, located in blocks/semsort
+Since Moodle 3.4, block_semester_sortierung is named block_semsort (mostly to avoid confusion with the long 
+name). In order to migrate from old to the new block, there is a Migration script as part of the block settings. Using the script, an administrator is able to:
+ * Migrate block instances on all users' Dashboard pages as well as on the Default Dashboard page
+ * Migrate user preferences (personal sorting, favorites) for all users
+ * Migrate block settings 
 
-On server:
-1. remove "git remote origin" from semester_sortierung, in order to prevent accidental update with the renamed version. 
-Inside moodle_core/blocks/semester_sortierung, run:
-  git remote remove origin
-
-2. install semsort
-Inside moodle_core/blocks, run:
-  git clone https://github.com/academic-moodle-cooperation/moodle-block_semsort.git semsort
-
-In moodle:
-1. Install block as usual
-2. Go to Site Administration > Plugins > Migrate settings from deprecated semester_sortierung block
-3. Run migration script
-4. Open Default Dashboard Page (Site Administration > Appearance > Default Dashboard Page)
-5. Turn Blocks editing on
-6. Remove semester_sortierung
-7. Add semsort 
-8. Turn Blocks editing off
-9. Reset Dashboard for all users
-10. Uninstall semester_sortierung from moodle (Site Administration > Plugins > Blocks > Manage blocks)
-
-On server:
-1. Delete blocks/semester_sortierung
-
-
-
-
-
-
+IMPORTANT! The script has to be executed before the old block is uninstalled! Otherwise all settings and preferences will be lost.
 
 
 Bug Reports / Support
