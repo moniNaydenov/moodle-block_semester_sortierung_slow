@@ -101,6 +101,7 @@ class renderer extends \plugin_renderer_base {
                     $acontext = new stdClass;
                     $acontext->semestertitle = get_string('setting:archivedesc', 'block_semsort', $context->config->archive);
                     $acontext->semestercode = 'arch';
+                    $acontext->expanded = isset($context->semestersexpanded['arch']);
                     $content .= $this->get_mustache()->render('block_semsort/semester_start', $acontext);
                 }
 
