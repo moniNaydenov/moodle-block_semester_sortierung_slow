@@ -70,7 +70,6 @@ class renderer extends \plugin_renderer_base {
         $content = '';
         $first = true;
         $archivestarted = false;
-        var_dump($context->archive);
 
         foreach ($context->courses as $semester => $semesterinfo) {
             $isfavorites = $semester == 'fav';
@@ -101,6 +100,7 @@ class renderer extends \plugin_renderer_base {
                     $archivestarted = true;
                     $acontext = new stdClass;
                     $acontext->semestertitle = get_string('setting:archivedesc', 'block_semsort', $context->config->archive);
+                    $acontext->semestercode = 'arch';
                     $content .= $this->get_mustache()->render('block_semsort/semester_start', $acontext);
                 }
 
