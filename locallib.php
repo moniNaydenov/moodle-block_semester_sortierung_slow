@@ -98,7 +98,7 @@ function block_semsort_update_personal_sort($config = null) {
     }
 
     if (($key = array_search($movecourse, $courseorder)) !== false) {
-        unset($usersort[$key]); // Remove the course from the list.
+        unset($courseorder[$key]); // Remove the course from the list.
     }
 
     if ($movecoursetarget >= count($courseorder)) {
