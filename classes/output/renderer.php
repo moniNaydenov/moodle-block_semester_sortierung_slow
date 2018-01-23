@@ -162,7 +162,6 @@ class renderer extends \plugin_renderer_base {
         if ($archivestarted) {
             $content .= $this->get_mustache()->render('block_semsort/semester_end');
         }
-        $content .= $this->get_mustache()->render('block_semsort/semester_end');
 
         // Closes the last semester box if the courses are not sorted.
         if (!$context->sorted) {
