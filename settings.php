@@ -27,6 +27,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$ADMIN->add('blocksettings', new admin_category('blocksettingsemsortfolder', new lang_string('pluginname', 'block_semsort')));
+
 if ($ADMIN->fulltree) {
 
     $configs = array();
@@ -65,7 +67,7 @@ if ($ADMIN->fulltree) {
 
     $values = array();
     for ($i = 0; $i < 16; $i++) {
-        $values[$i] = strval($i) ;
+        $values[$i] = strval($i);
     }
     $values[0] = get_string('no');
     $configs[] = new admin_setting_configselect('archive',
@@ -81,7 +83,14 @@ if ($ADMIN->fulltree) {
 
 }
 
-if (file_exists($CFG->dirroot . '/blocks/semester_sortierung/version.php')) {
-    $ADMIN->add('blocksettings', new admin_externalpage('blocksemsortmigrate', get_string('migrate_title', 'block_semsort'),
-        $CFG->wwwroot.'/blocks/semsort/db/migrate.php'));
+if (file_exists($CFG->dirroot . '/blocks/semester_sortierung/version.php') && false) {
+    $ADMIN->add('blocksettingsemsortfolder', $settings);
+    $ADMIN->add('blocksettingsemsortfolder',
+        new admin_externalpage(
+            'blocksemsortmigrate',
+            get_string('migrate_title', 'block_semsort'),
+            $CFG->wwwroot.'/blocks/semsort/db/migrate.php'
+        )
+    );
+    $settings = null; // Prevent duplicate settings page!
 }

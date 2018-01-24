@@ -176,16 +176,16 @@ class block_semsort extends block_base {
         $context->remotecourses = $remotecourses;
         $context->config = $this->config;
 
-        //archive magic comes here
+        // Archive magic comes here...
         if ($this->config->archive != 0) {
             $currentsemester = block_semsort_get_semester($this->config, time());
             $currentsemester = $currentsemester->semester_short;
-            $year = intval(substr($currentsemester, 0, 4)); //TODO: fix, this works only for Gregorian!
+            $year = intval(substr($currentsemester, 0, 4)); // TODO: improve, this works only for Gregorian!
             $semester = substr($currentsemester, 4);
             $archive = intval($this->config->archive);
 
             $year -= floor($archive / 2);
-            if ($archive % 2 != 0) { // number is odd, so semester changes from winter to summer or vs..
+            if ($archive % 2 != 0) { // Number is odd, so semester changes from winter to summer or vs..
                 if ($semester == 'S') {
                     $year--;
                     $semester = 'W';

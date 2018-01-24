@@ -43,8 +43,7 @@ class migrateform extends moodleform {
         $mform->addElement('checkbox', 'usersettings', get_string('migrate:usersettings', 'block_semsort') );
         $mform->addElement('checkbox', 'adminsettings', get_string('migrate:adminsettings', 'block_semsort'));
 
-        //normally you use add_action_buttons instead of this code
-        $buttonarray=array();
+        $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'migrateone', get_string('migrateone', 'block_semsort'));
         $buttonarray[] = $mform->createElement('submit', 'migrateall', get_string('migrateall', 'block_semsort'));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);

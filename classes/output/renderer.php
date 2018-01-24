@@ -105,8 +105,6 @@ class renderer extends \plugin_renderer_base {
                     $content .= $this->get_mustache()->render('block_semsort/semester_start', $acontext);
                 }
 
-
-
                 $content .= $this->get_mustache()->render('block_semsort/semester_start', $scontext);
             } else if ($first) {
                 // When not sorted, only one div is opened.

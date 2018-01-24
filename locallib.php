@@ -401,12 +401,19 @@ function block_semsort_migrate_user_preferences($migrateall = false) {
         'semester_sortierung_favorites' => 'semsort_favorites'
     );
     foreach ($prefs as $oldname => $newname) {
-        $olduserprefs = $DB->get_records('user_preferences', array('name' => $oldname) + $userfilter, '', 'userid, name, value, id');
-        $newuserprefs = $DB->get_records('user_preferences', array('name' => $newname) + $userfilter, '', 'userid, name, value, id');
+        $olduserprefs = $DB->get_records('user_preferences',
+            array('name' => $oldname) + $userfilter,
+            '',
+            'userid, name, value, id'
+        );
+        $newuserprefs = $DB->get_records('user_preferences',
+            array('name' => $newname) + $userfilter,
+            '',
+            'userid, name, value, id'
+        );
         foreach ($olduserprefs as $oldpref) {
             $counters->userprefs++;
             if (isset($newuserprefs[$oldpref->userid])) {
-                //continue; // Skip if user pref already migrated!
                 $newuserprefs[$oldpref->userid]->value = $oldpref->value;
                 $DB->update_record('user_preferences', $newuserprefs[$oldpref->userid]);
             } else {
@@ -418,9 +425,8 @@ function block_semsort_migrate_user_preferences($migrateall = false) {
             }
         }
 
-
     }
-    
+
     return $counters;
 }
 
