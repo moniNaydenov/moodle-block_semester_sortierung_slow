@@ -83,7 +83,7 @@ if ($ADMIN->fulltree) {
 
 }
 
-if (file_exists($CFG->dirroot . '/blocks/semester_sortierung/version.php') && false) {
+if (file_exists($CFG->dirroot . '/blocks/semester_sortierung/version.php')) {
     $ADMIN->add('blocksettingsemsortfolder', $settings);
     $ADMIN->add('blocksettingsemsortfolder',
         new admin_externalpage(

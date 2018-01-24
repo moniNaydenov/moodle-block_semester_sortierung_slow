@@ -39,9 +39,13 @@ class migrateform extends moodleform {
     protected function definition() {
         $mform = &$this->_form;
         $mform->addElement('checkbox', 'defaultdashboard', get_string('migrate:defaultdashboard', 'block_semsort'));
+        $mform->addHelpButton('defaultdashboard', 'migrate:defaultdashboard', 'block_semsort');
         $mform->addElement('checkbox', 'alldashboards', get_string('migrate:alldashboards', 'block_semsort'));
+        $mform->addHelpButton('alldashboards', 'migrate:alldashboards', 'block_semsort');
         $mform->addElement('checkbox', 'usersettings', get_string('migrate:usersettings', 'block_semsort') );
+        $mform->addHelpButton('usersettings', 'migrate:usersettings', 'block_semsort');
         $mform->addElement('checkbox', 'adminsettings', get_string('migrate:adminsettings', 'block_semsort'));
+        $mform->addHelpButton('adminsettings', 'migrate:adminsettings', 'block_semsort');
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'migrateone', get_string('migrateone', 'block_semsort'));
@@ -74,10 +78,11 @@ if ($migrateform->is_submitted() && $data = $migrateform->get_data()) {
     if (isset($data->alldashboards)) {
         if ($migrateall) {
             block_semsort_migrate_all_dashboards();
+            $migratemessages .= get_string('migrate:alldashboards:success',  'block_semsort') . '<br />';
         } else {
             block_semsort_migrate_currentuser_dashboard();
+            $migratemessages .= get_string('migrate:alldashboards_currentuser:success',  'block_semsort') . '<br />';
         }
-        $migratemessages .= get_string('migrate:alldashboards:success',  'block_semsort') . '<br />';
     }
     if (isset($data->usersettings)) {
         $counts = block_semsort_migrate_user_preferences($migrateall);
