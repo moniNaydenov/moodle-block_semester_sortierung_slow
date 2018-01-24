@@ -10,6 +10,7 @@ CHANGELOG
 * [UPDATE] update for moodle 3.4
 * [FIXED] move user personal sorting settings to a separate db table due to user_preference length limitation
 * [FEATURE] add "Archive" section
+* [FEATURE] add migration script for a painless migration from old block
 
 
 3.3.0 (2017-05-14)

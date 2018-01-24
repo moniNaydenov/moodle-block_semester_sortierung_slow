@@ -58,6 +58,19 @@ administrators in the Semsort block:
 * Show favourites (checkbox) - controls whether favourites on
 * Archive (number) - group semesters that are older than the specified value 
 
+Migrating settings from old semester_sortierung block
+---------------------
+
+Since Moodle 3.4, block_semester_sortierung is named block_semsort (mostly to avoid confusion with the long 
+name). In order to migrate from old to the new block, there is a Migration script as part of the block settings. Using the script, an administrator is able to:
+ * Migrate block instances on all users' Dashboard pages as well as on the Default Dashboard page
+ * Migrate user preferences (personal sorting, favorites) for all users
+ * Migrate block settings 
+
+The script is located in *Site administration > Plugins > Blocks > Semester overview - Migrate settings from deprecated semester_sortierung block*
+
+**IMPORTANT!** The script has to be executed before the old block is uninstalled! Otherwise all settings and preferences will be lost.
+
 
 Web Service
 -----------
@@ -92,17 +105,6 @@ The Semsort block provides the following web service functions.
   - Image format: base64 png
   - Sample output: `[ {"modname": "MODULE NAME - UNIQUE ID", "title_en": "Module title in English", "title_de": "Module title in German", "image": "base64EncodedImage"} ]`
 
-
-Migrating settings from old semester_sortierung block
----------------------
-
-Since Moodle 3.4, block_semester_sortierung is named block_semsort (mostly to avoid confusion with the long 
-name). In order to migrate from old to the new block, there is a Migration script as part of the block settings. Using the script, an administrator is able to:
- * Migrate block instances on all users' Dashboard pages as well as on the Default Dashboard page
- * Migrate user preferences (personal sorting, favorites) for all users
- * Migrate block settings 
-
-IMPORTANT! The script has to be executed before the old block is uninstalled! Otherwise all settings and preferences will be lost.
 
 
 Bug Reports / Support
