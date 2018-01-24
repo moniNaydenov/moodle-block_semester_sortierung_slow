@@ -100,9 +100,12 @@ function block_semsort_update_personal_sort($config = null) {
     if (($key = array_search($movecourse, $courseorder)) !== false) {
         unset($courseorder[$key]); // Remove the course from the list.
     }
+    $courseorder = array_values($courseorder);
 
-    if ($movecoursetarget >= count($courseorder)) {
-        $movecoursetarget = count($courseorder) - 1; // Prevent invalid input.
+    if ($movecoursetarget > count($courseorder)) {
+        $movecoursetarget = count($courseorder); // Prevent invalid input.
+    } else if ($movecoursetarget < 0) {
+        $movecoursetarget = 0; // Prevent invalid input.
     }
 
     array_splice($courseorder, $movecoursetarget, 0, $movecourse); // Add the course at the new index.
