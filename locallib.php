@@ -281,9 +281,36 @@ function block_semsort_get_courses_events($courses, $output) {
     require_once($CFG->dirroot . '/calendar/lib.php');
     require_once($CFG->dirroot . '/calendar/externallib.php');
 
-    $allevents = \core_calendar\local\api::get_action_events_by_courses(
+    /*$allevents1 = \core_calendar\local\api::get_action_events_by_courses(
         $courses
     );
+*/
+    $allevents2 = \core_calendar\local\api::get_action_events_by_timesort(null, time() + 31*24*60*60);
+    $allevents3 = \core_calendar\local\api::get_action_events_by_timesort(time(), null);
+
+    $allevents = array();
+    $foundevents = array();
+
+    foreach ($allevents2 as $event) {
+        $courseid = $event->get_course()->get('id');
+        if (!isset($allevents[$courseid])) {
+            $allevents[$courseid] = array();
+        }
+        $allevents[$courseid][] = $event;
+        $foundevents[$event->get_id()] = 1;
+    }
+    foreach ($allevents3 as $event) {
+        $courseid = $event->get_course()->get('id');
+        if (!isset($allevents[$courseid])) {
+            $allevents[$courseid] = array();
+        }
+        if (!isset($foundevents[$event->get_id()])) {
+            $allevents[$courseid][] = $event;
+        }
+    }
+
+    //$allevents = $allevents1;
+
 
     $exportercache = new \core_calendar\external\events_related_objects_cache($allevents, $courses);
     $exporter = new \core_calendar\external\events_grouped_by_course_exporter($allevents, ['cache' => $exportercache]);
