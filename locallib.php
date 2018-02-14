@@ -275,43 +275,111 @@ function block_semsort_get_semester($config, $timestamp) {
 
 }
 
+
+function block_semsort_get_events($vault, $courseids, $timesortfrom, $timesortto) {
+    global $USER;
+/*
+    $categoryids = array_map(function($category) {
+        return $category->id;
+    }, \coursecat::get_all());
+
+*/
+
+    $categoryids = null;
+    $groupids = array_reduce($courseids, function($carry, $courseid) use ($USER) {
+        $groupings = groups_get_user_groups($courseid, $USER->id);
+        // Grouping 0 is all groups.
+        return array_merge($carry, $groupings[0]);
+    }, []);
+
+    return $vault->get_events(
+        null,
+        null,
+        $timesortfrom,
+        $timesortto,
+        null,
+        null,
+        50, // TODO: increase to 200 for 3.4!
+        CALENDAR_EVENT_TYPE_ACTION,
+        [$USER->id],
+        $groupids ? $groupids : null,
+        $courseids ? $courseids : null,
+        /*$categoryids ? $categoryids : null,*/ // TODO: remove for 3.4!
+        true,
+        true,
+        function ($event) {
+            return $event instanceof \core_calendar\local\event\entities\action_event_interface;
+        }
+    );
+
+}
+
+
+
 function block_semsort_get_courses_events($courses, $output) {
-    global $CFG;
+    global $CFG, $USER;
 
     require_once($CFG->dirroot . '/calendar/lib.php');
     require_once($CFG->dirroot . '/calendar/externallib.php');
 
+
+
+
     /*$allevents1 = \core_calendar\local\api::get_action_events_by_courses(
         $courses
+    );*/
+
+
+    $vault = \core_calendar\local\event\container::get_event_vault();
+
+
+    $courseids = array_keys($courses);
+    $alleventsall = array(
+        block_semsort_get_events($vault, $courseids, time() - 3*31*24*60*60, null),
+        block_semsort_get_events($vault, $courseids, 0, 0),
     );
-*/
-    $allevents2 = \core_calendar\local\api::get_action_events_by_timesort(null, time() + 31*24*60*60);
-    $allevents3 = \core_calendar\local\api::get_action_events_by_timesort(time(), null);
 
     $allevents = array();
     $foundevents = array();
 
-    foreach ($allevents2 as $event) {
-        $courseid = $event->get_course()->get('id');
-        if (!isset($allevents[$courseid])) {
-            $allevents[$courseid] = array();
-        }
-        $allevents[$courseid][] = $event;
-        $foundevents[$event->get_id()] = 1;
-    }
-    foreach ($allevents3 as $event) {
-        $courseid = $event->get_course()->get('id');
-        if (!isset($allevents[$courseid])) {
-            $allevents[$courseid] = array();
-        }
-        if (!isset($foundevents[$event->get_id()])) {
+
+    foreach ($alleventsall as $allevents2) {
+        foreach ($allevents2 as $event) {
+            $courseid = $event->get_course()->get('id');
+
+            if (!isset($allevents[$courseid])) {
+                $allevents[$courseid] = array();
+            }
             $allevents[$courseid][] = $event;
+            $foundevents[$event->get_id()] = 1;
+        }
+    }
+/*
+echo '<pre>';
+    ksort($allevents1);
+
+    ksort($allevents);
+
+    foreach ($allevents1 as $courseid => $events) {
+        if (count($events) == 0) {
+            continue;
+        }
+        echo 'COURSE: ' . $courseid .  '   -   ' . count($events) . PHP_EOL;
+        foreach ($events as $event) {
+            echo "\t\t" . $event->get_id() . '  -  '. $event->get_times()->get_sort_time()->getTimestamp() . PHP_EOL;
+        }
+    }
+    var_dump(str_repeat('--', 50));
+    foreach ($allevents as $courseid => $events) {
+        //echo 'COURSE: ' . $courseid . PHP_EOL;
+
+        echo 'COURSE: ' . $courseid .  '   -   ' . count($events) . PHP_EOL;
+        foreach ($events as $event) {
+            echo "\t\t" . $event->get_id() . '  -  '. $event->get_times()->get_sort_time()->getTimestamp() . PHP_EOL;
         }
     }
 
-    //$allevents = $allevents1;
-
-
+    die;*/
     $exportercache = new \core_calendar\external\events_related_objects_cache($allevents, $courses);
     $exporter = new \core_calendar\external\events_grouped_by_course_exporter($allevents, ['cache' => $exportercache]);
 

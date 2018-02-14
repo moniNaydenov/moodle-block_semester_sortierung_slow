@@ -153,13 +153,18 @@ class block_semsort extends block_base {
 
         $context->coursesexpanded = array();
 
+        $count = 0;
         // Create an array with expanded courses to be filled up with info.
         foreach ($context->courses as $semester => $semesterinfo) {
+            if ($count >= 3) {
+                break; // Don't allow more than three semesters opened (performance reasons);
+            }
             foreach ($semesterinfo['courses'] as $id => $courseinfo) {
                 if (isset($coursesexpanded[strval($courseinfo->id)])) {
                     $context->coursesexpanded[$courseinfo->id] = $courseinfo;
                 }
             }
+            $count++;
         }
 
         $context->exportedevents = block_semsort_get_courses_events($context->coursesexpanded, $output);
