@@ -335,8 +335,8 @@ function block_semsort_get_courses_events($courses, $output) {
 
     $courseids = array_keys($courses);
     $alleventsall = array(
-        block_semsort_get_events($vault, $courseids, time() - 3*31*24*60*60, null),
-        block_semsort_get_events($vault, $courseids, 0, 0),
+        block_semsort_get_events($vault, $courseids, time() - 6*31*24*60*60, null),
+        block_semsort_get_events($vault, $courseids, -1, 1),
     );
 
     $allevents = array();
@@ -356,20 +356,9 @@ function block_semsort_get_courses_events($courses, $output) {
     }
 /*
 echo '<pre>';
-    ksort($allevents1);
 
     ksort($allevents);
 
-    foreach ($allevents1 as $courseid => $events) {
-        if (count($events) == 0) {
-            continue;
-        }
-        echo 'COURSE: ' . $courseid .  '   -   ' . count($events) . PHP_EOL;
-        foreach ($events as $event) {
-            echo "\t\t" . $event->get_id() . '  -  '. $event->get_times()->get_sort_time()->getTimestamp() . PHP_EOL;
-        }
-    }
-    var_dump(str_repeat('--', 50));
     foreach ($allevents as $courseid => $events) {
         //echo 'COURSE: ' . $courseid . PHP_EOL;
 
