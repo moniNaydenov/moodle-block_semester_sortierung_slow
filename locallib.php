@@ -299,12 +299,12 @@ function block_semsort_get_events($vault, $courseids, $timesortfrom, $timesortto
         $timesortto,
         null,
         null,
-        50, // TODO: increase to 200 for 3.4!
+        200,
         CALENDAR_EVENT_TYPE_ACTION,
         [$USER->id],
         $groupids ? $groupids : null,
         $courseids ? $courseids : null,
-        /*$categoryids ? $categoryids : null, */ // TODO: uncomment for 3.4!
+        $categoryids ? $categoryids : null, 
         true,
         true,
         function ($event) {
