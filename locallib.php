@@ -304,7 +304,7 @@ function block_semsort_get_events($vault, $courseids, $timesortfrom, $timesortto
         [$USER->id],
         $groupids ? $groupids : null,
         $courseids ? $courseids : null,
-        /*$categoryids ? $categoryids : null,*/ // TODO: remove for 3.4!
+        /*$categoryids ? $categoryids : null, */ // TODO: uncomment for 3.4!
         true,
         true,
         function ($event) {
