@@ -154,9 +154,10 @@ class block_semsort extends block_base {
         $context->coursesexpanded = array();
 
         $count = 0;
+        $autoclose = isset($this->config->autoclose) ? intval($this->config->autoclose) : 0;
         // Create an array with expanded courses to be filled up with info.
         foreach ($context->courses as $semester => $semesterinfo) {
-            if ($count >= 3) {
+            if ($autoclose > 0 && $count >= $autoclose) {
                 break; // Don't allow more than three semesters opened (performance reasons);
             }
             foreach ($semesterinfo['courses'] as $id => $courseinfo) {

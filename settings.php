@@ -76,6 +76,25 @@ if ($ADMIN->fulltree) {
         0,
         $values
     );
+    $values[0] = get_string('showall', 'moodle', '');
+    $configs[] = new admin_setting_configselect('autoclose',
+        get_string('setting:autoclose', 'block_semsort'),
+        get_string('setting:autoclosedesc', 'block_semsort'),
+        0,
+        $values
+    );
+    $values = array();
+    for ($i = 0; $i <= 48; $i++) {
+        $values[$i] = strval($i);
+    }
+    $values[0] = get_string('showall', 'moodle', '');
+
+    $configs[] = new admin_setting_configselect('skipevents',
+        get_string('setting:skipevents', 'block_semsort'),
+        get_string('setting:skipeventsdesc', 'block_semsort'),
+        0,
+        $values
+    );
     foreach ($configs as $config) {
         $config->plugin = 'block_semsort';
         $settings->add($config);

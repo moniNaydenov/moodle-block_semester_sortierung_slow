@@ -57,6 +57,8 @@ administrators in the Semsort block:
 * Winter semester months (checkbox) - select which months should apply for the winter semester
 * Show favourites (checkbox) - controls whether favourites on
 * Archive (number) - group semesters that are older than the specified value 
+* Autocollapse courses (number) - always show courses older than the specified number of months as collapse (only if there are performance issues) 
+* Skip older events (number) - don't load events older than the specified number of months (only if there are performance issues)
 
 Migrating settings from old semester_sortierung block
 ---------------------

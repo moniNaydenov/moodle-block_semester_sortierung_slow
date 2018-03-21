@@ -329,13 +329,19 @@ function block_semsort_get_courses_events($courses, $output) {
         $courses
     );*/
 
+    $skipevents = intval(get_config('block_semsort', 'skipevents'));
+
+    $timefrom = 0;
+    if ($skipevents > 0) {
+        $timefrom = time() - $skipevents * 31 * 24 * 60 * 60;
+    }
 
     $vault = \core_calendar\local\event\container::get_event_vault();
 
 
     $courseids = array_keys($courses);
     $alleventsall = array(
-        block_semsort_get_events($vault, $courseids, time() - 6*31*24*60*60, null),
+        block_semsort_get_events($vault, $courseids, $timefrom, null),
         block_semsort_get_events($vault, $courseids, -1, 1),
     );
 

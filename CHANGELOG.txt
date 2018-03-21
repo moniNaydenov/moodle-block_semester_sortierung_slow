@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+3.4.2 (2018-03-21)
+------------------
+* [BUG] improve performance when loading course events by introducing two new settings - 'Autocollapse courses'
+  and 'Skip older events'
+
 3.4.0 (2017-11-13)
 ------------------
 

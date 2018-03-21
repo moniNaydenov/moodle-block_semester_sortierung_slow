@@ -64,3 +64,9 @@ $string['migrateall'] = 'Migrate for all users';
 
 $string['setting:archivedesc'] = 'Older than {$a} terms';
 $string['setting:archive'] = 'Archive';
+
+$string['setting:autoclose'] = 'Autocollapse courses';
+$string['setting:autoclosedesc'] = 'Automatically collapse expanded courses older than ... semesters';
+
+$string['setting:skipevents'] = 'Skip older events';
+$string['setting:skipeventsdesc'] = 'Skip events that are older than ... months';
