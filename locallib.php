@@ -523,6 +523,131 @@ function block_semsort_migrate_user_preferences($migrateall = false) {
     return $counters;
 }
 
+
+
+// Reversed migration functions start here.
+
+function block_semsort_migrate2_admin_settings() {
+    global $DB;
+    $oldsettings = $DB->get_records('config_plugins', array('plugin' => 'block_semsort'));
+    $settings = $DB->get_records('config_plugins', array('plugin' => 'block_semester_sortierung'), '', 'name, id, plugin, value');
+
+    foreach ($oldsettings as $oldsetting) {
+        if ($oldsetting->name == 'version') {
+            continue;
+        }
+
+        if (isset($settings[$oldsetting->name])) {
+            $settings[$oldsetting->name]->value = $oldsetting->value;
+            $DB->update_record('config_plugins', $settings[$oldsetting->name]);
+        } else {
+            $oldsetting->plugin = 'block_semester_sortierung';
+            unset($oldsetting->id);
+            $DB->insert_record('config_plugins', $oldsetting);
+        }
+    }
+
+    cache_helper::invalidate_by_definition('core', 'config', array(), 'block_semester_sortierung');
+}
+
+function block_semsort_migrate2_default_dashboard() {
+    global $DB;
+    $instance = $DB->get_record('block_instances', array('blockname' => 'semsort', 'parentcontextid' => 1));
+    if ($instance) {
+        $instance->blockname = 'semester_sortierung';
+        $DB->update_record('block_instances', $instance);
+    }
+}
+
+function block_semsort_migrate2_currentuser_dashboard() {
+    global $DB, $USER;
+    $context = \context_user::instance($USER->id);
+    $instance = $DB->get_record('block_instances', array('blockname' => 'semsort', 'parentcontextid' => $context->id));
+    if ($instance) {
+        $instance->blockname = 'semester_sortierung';
+        $DB->update_record('block_instances', $instance);
+    }
+}
+
+function block_semsort_migrate2_all_dashboards() {
+    global $DB;
+
+    $instances = $DB->get_records('block_instances', array('blockname' => 'semsort'));
+    $count = 0;
+    foreach ($instances as $instance) {
+        if ($instance->parentcontextid == 1) {
+            continue;
+        }
+        $instance->blockname = 'semester_sortierung';
+        $DB->update_record('block_instances', $instance);
+        $count++;
+    }
+    return $count;
+}
+
+function block_semsort_migrate2_user_preferences($migrateall = false) {
+    global $DB, $USER;
+    // Move sorting preferences from user preferences to new table!
+    $userfilter = array();
+    if (!$migrateall) {
+        $userfilter = array('userid' => $USER->id);
+    }
+
+    $counters = new stdClass;
+    $counters->updated = 0;
+    $counters->inserted = 0;
+    $counters->unchanged = 0;
+    $counters->userprefs = 0;
+
+    $DB->delete_records('block_semester_sortierung_us', $userfilter);
+
+    $userprefs = $DB->get_records('block_semsort_usersort', $userfilter);
+
+    foreach ($userprefs as $up) {
+        unset($up->id);
+        $DB->insert_record('block_semester_sortierung_us', $up);
+        $counters->userprefs++;
+        $counters->inserted++;
+    }
+
+    // Migrate the rest of the user preferences!
+    $prefs = array(
+        'semsort_courses' => 'semester_sortierung_courses',
+        'semsort_semesters' => 'semester_sortierung_semesters',
+        'semsort_favorites' => 'semester_sortierung_favorites'
+    );
+    foreach ($prefs as $oldname => $newname) {
+        $olduserprefs = $DB->get_records('user_preferences',
+            array('name' => $oldname) + $userfilter,
+            '',
+            'userid, name, value, id'
+        );
+        $newuserprefs = $DB->get_records('user_preferences',
+            array('name' => $newname) + $userfilter,
+            '',
+            'userid, name, value, id'
+        );
+        foreach ($olduserprefs as $oldpref) {
+            $counters->userprefs++;
+            if (isset($newuserprefs[$oldpref->userid])) {
+                $newuserprefs[$oldpref->userid]->value = $oldpref->value;
+                $DB->update_record('user_preferences', $newuserprefs[$oldpref->userid]);
+            } else {
+                $userpref = new stdClass;
+                $userpref->name = $newname;
+                $userpref->value = $oldpref->value;
+                $userpref->userid = $oldpref->userid;
+                $DB->insert_record('user_preferences', $userpref);
+            }
+        }
+
+    }
+
+    return $counters;
+}
+
+
+
 function block_semsort_get_usersort($userid) {
     global $DB;
     return $DB->get_records('block_semsort_usersort', array('userid' => $userid),

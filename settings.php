@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
 
     $configs = array();
 
-    $configs[] = new admin_setting_configcheckbox('sortcourses',
+    $configs[] = new admin_setting_configcheckbox('block_semsort/sortcourses',
         get_string('sortcourse', 'block_semsort'),
         get_string('sortcoursedesc', 'block_semsort'), '1');
 
@@ -49,18 +49,18 @@ if ($ADMIN->fulltree) {
         }
     }
 
-    $configs[] = new admin_setting_configmulticheckbox('wintermonths',
+    $configs[] = new admin_setting_configmulticheckbox('block_semsort/wintermonths',
         get_string('wintermonths', 'block_semsort'),
         get_string('monthsdesc', 'block_semsort'),
         $selected,
         $monthsarray);
 
-    $configs[] = new admin_setting_configcheckbox('enablefavorites',
+    $configs[] = new admin_setting_configcheckbox('block_semsort/enablefavorites',
         get_string('enablefavorites', 'block_semsort'),
         get_string('enablefavoritesdesc', 'block_semsort'),
         '1');
 
-    $configs[] = new admin_setting_configcheckbox('enablepersonalsort',
+    $configs[] = new admin_setting_configcheckbox('block_semsort/enablepersonalsort',
         get_string('enablepersonalsort', 'block_semsort'),
         get_string('enablepersonalsortdesc', 'block_semsort'),
         '1');
@@ -70,14 +70,14 @@ if ($ADMIN->fulltree) {
         $values[$i] = strval($i);
     }
     $values[0] = get_string('no');
-    $configs[] = new admin_setting_configselect('archive',
+    $configs[] = new admin_setting_configselect('block_semsort/archive',
         get_string('setting:archive', 'block_semsort'),
         get_string('setting:archivedesc', 'block_semsort', '...'),
         0,
         $values
     );
     $values[0] = get_string('showall', 'moodle', '');
-    $configs[] = new admin_setting_configselect('autoclose',
+    $configs[] = new admin_setting_configselect('block_semsort/autoclose',
         get_string('setting:autoclose', 'block_semsort'),
         get_string('setting:autoclosedesc', 'block_semsort'),
         0,
@@ -89,7 +89,7 @@ if ($ADMIN->fulltree) {
     }
     $values[0] = get_string('showall', 'moodle', '');
 
-    $configs[] = new admin_setting_configselect('skipevents',
+    $configs[] = new admin_setting_configselect('block_semsort/skipevents',
         get_string('setting:skipevents', 'block_semsort'),
         get_string('setting:skipeventsdesc', 'block_semsort'),
         0,
@@ -109,6 +109,13 @@ if (file_exists($CFG->dirroot . '/blocks/semester_sortierung/version.php')) {
             'blocksemsortmigrate',
             get_string('migrate_title', 'block_semsort'),
             $CFG->wwwroot.'/blocks/semsort/db/migrate.php'
+        )
+    );
+    $ADMIN->add('blocksettingsemsortfolder',
+        new admin_externalpage(
+            'blocksemsortmigrate2',
+            get_string('migrate2_title', 'block_semsort'),
+            $CFG->wwwroot.'/blocks/semsort/db/migrate2.php'
         )
     );
     $settings = null; // Prevent duplicate settings page!

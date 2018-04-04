@@ -194,6 +194,10 @@ YUI.add('moodle-block_semsort-semsort', function (Y) {
     Y.DD.DDM.on('drag:start', function (e) {
         // Get our drag object.
         var drag = e.target;
+        var node = drag.get('node');
+        if (node._node.nodeName !== 'FIELDSET' || !node.hasClass('course')) {
+            return;
+        }
         // Set some styles here.
         var html = '<div class="semester expanded">' + drag.get('node').get('outerHTML') + '</div>';
 
@@ -209,6 +213,10 @@ YUI.add('moodle-block_semsort-semsort', function (Y) {
 
     Y.DD.DDM.on('drag:end', function (e) {
         var drag = e.target;
+        var node = drag.get('node');
+        if (node._node.nodeName !== 'FIELDSET' || !node.hasClass('course')) {
+            return;
+        }
         // Put our styles back.
         drag.get('node').setStyles({
             visibility: '',
@@ -240,6 +248,10 @@ YUI.add('moodle-block_semsort-semsort', function (Y) {
 
     Y.DD.DDM.on('drop:over', function (e) {
         // Get a reference to our drag and drop nodes.
+        var node = e.target.get('node');
+        if (node._node.nodeName !== 'FIELDSET' || !node.hasClass('course')) {
+            return;
+        }
         var drag = e.drag.get('node'),
             drop = e.drop.get('node');
         var dragSemester = drag.getData("semester");
