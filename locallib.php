@@ -336,7 +336,7 @@ function block_semsort_get_courses_events($courses, $output) {
 
     $courseids = array_keys($courses);
     $alleventsall = array(
-       // block_semsort_get_events($vault, $courseids, $timefrom, null),
+        block_semsort_get_events($vault, $courseids, $timefrom, null),
         //block_semsort_get_events($vault, $courseids, -1, 1),
     );
 
@@ -355,21 +355,7 @@ function block_semsort_get_courses_events($courses, $output) {
             $foundevents[$event->get_id()] = 1;
         }
     }
-/*
-echo '<pre>';
 
-    ksort($allevents);
-
-    foreach ($allevents as $courseid => $events) {
-        //echo 'COURSE: ' . $courseid . PHP_EOL;
-
-        echo 'COURSE: ' . $courseid .  '   -   ' . count($events) . PHP_EOL;
-        foreach ($events as $event) {
-            echo "\t\t" . $event->get_id() . '  -  '. $event->get_times()->get_sort_time()->getTimestamp() . PHP_EOL;
-        }
-    }
-
-    die;*/
     $exportercache = new \core_calendar\external\events_related_objects_cache($allevents, $courses);
     $exporter = new \core_calendar\external\events_grouped_by_course_exporter($allevents, ['cache' => $exportercache]);
 
