@@ -169,10 +169,10 @@ class block_semsort extends block_base {
         }
 
         $context->exportedevents = array();
-        foreach ($context->coursesexpanded as $id => $course) {
+       /* foreach ($context->coursesexpanded as $id => $course) {
             $context->exportedevents = $context->exportedevents + block_semsort_get_courses_events(array($id => $course), $output);
-        }
-        //$context->exportedevents = block_semsort_get_courses_events($context->coursesexpanded, $output);
+        }*/
+        $context->exportedevents = block_semsort_get_courses_events($context->coursesexpanded, $output);
 
         // Whether the courses should be sorted.
         $context->sorted = (isset($this->config->sortcourses) && $this->config->sortcourses == '1');
