@@ -336,7 +336,7 @@ function block_semsort_get_courses_events($courses, $output) {
 
     $courseids = array_keys($courses);
     $alleventsall = array(
-        //block_semsort_get_events($vault, $courseids, $timefrom, null),
+        block_semsort_get_events($vault, $courseids, $timefrom, null),
         block_semsort_get_events($vault, $courseids, -1, 1),
     );
 
