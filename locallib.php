@@ -324,11 +324,6 @@ function block_semsort_get_courses_events($courses, $output) {
 
 
 
-
-    /*$allevents1 = \core_calendar\local\api::get_action_events_by_courses(
-        $courses
-    );*/
-
     $skipevents = intval(get_config('block_semsort', 'skipevents'));
 
     $timefrom = 0;
@@ -341,8 +336,8 @@ function block_semsort_get_courses_events($courses, $output) {
 
     $courseids = array_keys($courses);
     $alleventsall = array(
-        block_semsort_get_events($vault, $courseids, $timefrom, null),
-        block_semsort_get_events($vault, $courseids, -1, 1),
+       // block_semsort_get_events($vault, $courseids, $timefrom, null),
+        //block_semsort_get_events($vault, $courseids, -1, 1),
     );
 
     $allevents = array();
