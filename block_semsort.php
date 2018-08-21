@@ -168,7 +168,8 @@ class block_semsort extends block_base {
             $count++;
         }
 
-        $context->exportedevents = block_semsort_get_courses_events($context->coursesexpanded, $output);
+        //$context->exportedevents = block_semsort_get_courses_events($context->coursesexpanded, $output);
+        $context->exportedevents = array();
 
         // Whether the courses should be sorted.
         $context->sorted = (isset($this->config->sortcourses) && $this->config->sortcourses == '1');
