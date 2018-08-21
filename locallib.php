@@ -276,7 +276,7 @@ function block_semsort_get_semester($config, $timestamp) {
 }
 
 
-function block_semsort_get_events($vault, $courseids, $timesortfrom, $timesortto) {
+function block_semsort_get_events(\core_calendar\local\event\data_access\event_vault_interface $vault, $courseids, $timesortfrom, $timesortto) {
     global $USER;
 /*
     $categoryids = array_map(function($category) {
@@ -336,8 +336,8 @@ function block_semsort_get_courses_events($courses, $output) {
 
     $courseids = array_keys($courses);
     $alleventsall = array(
-        block_semsort_get_events($vault, $courseids, $timefrom, null),
-        //block_semsort_get_events($vault, $courseids, -1, 1),
+        //block_semsort_get_events($vault, $courseids, $timefrom, null),
+        block_semsort_get_events($vault, $courseids, -1, 1),
     );
 
     $allevents = array();
